@@ -45,16 +45,14 @@
 				<span>{column.name}</span>
 				<div class="flex gap-2">
 					<Button
-						class="icon-btn ml-2 cursor-pointer border-none bg-transparent text-lg hover:text-blue-600"
+						variant="outline"
+						size="icon"
 						title="Clean Column"
 						onclick={() => cleanColumn(column.id)}
 					>
 						<BrushCleaning />
 					</Button>
-					<Button
-						class="icon-btn ml-2 cursor-pointer border-none bg-transparent text-lg hover:text-blue-600"
-						title="Delete Column"
-					>
+					<Button variant="outline" size="icon" title="Delete Column">
 						<Trash2 />
 					</Button>
 				</div>
