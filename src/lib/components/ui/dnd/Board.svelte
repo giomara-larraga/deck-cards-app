@@ -2,10 +2,10 @@
 	// This is done in a single file for clarity. A more factored version here: https://svelte.dev/repl/288f827275db4054b23c437a572234f6?version=3.38.2
 	import { flip } from 'svelte/animate';
 	import { dndzone } from 'svelte-dnd-action';
-	import type { BoardItem } from '$lib/types';
 
 	import { board, items } from '$lib/stores';
-
+	import { Button } from '$lib/components/ui/Button/index.js';
+	import { Home, Library, BrushCleaning, Trash2 } from '@lucide/svelte';
 	const flipDurationMs = 200;
 
 	function handleDndConsiderCards(cid: number, e: any) {
@@ -44,25 +44,19 @@
 			<div class="mb-2 flex items-center justify-between">
 				<span>{column.name}</span>
 				<div class="flex gap-2">
-					<button
-						class="icon-btn ml-2 cursor-pointer border-none bg-transparent text-lg hover:text-blue-600"
-						title="Add Blank Card"
-					>
-						📝
-					</button>
-					<button
+					<Button
 						class="icon-btn ml-2 cursor-pointer border-none bg-transparent text-lg hover:text-blue-600"
 						title="Clean Column"
-						on:click={() => cleanColumn(column.id)}
+						onclick={() => cleanColumn(column.id)}
 					>
-						🧹
-					</button>
-					<button
+						<BrushCleaning />
+					</Button>
+					<Button
 						class="icon-btn ml-2 cursor-pointer border-none bg-transparent text-lg hover:text-blue-600"
 						title="Delete Column"
 					>
-						❌
-					</button>
+						<Trash2 />
+					</Button>
 				</div>
 			</div>
 			<div
@@ -85,43 +79,3 @@
 		</div>
 	{/each}
 </section>
-
-<style>
-	.board {
-		height: 55vh;
-		width: 100%;
-		padding: 0.5em;
-		margin-bottom: 40px;
-	}
-	.column {
-		height: inherit;
-		width: 13em;
-		padding: 0.5em;
-		margin: 1em;
-		float: left;
-		border: 1px solid #333333;
-		/*Notice we make sure this container doesn't scroll so that the title stays on top and the dndzone inside is scrollable*/
-		overflow-y: hidden;
-	}
-	.column-content {
-		height: inherit;
-		/* Notice that the scroll container needs to be the dndzone if you want dragging near the edge to trigger scrolling */
-		overflow-y: scroll;
-		justify-items: center;
-	}
-	.column-title {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	}
-	.icon-btn {
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 1.2em;
-		margin-left: 0.5em;
-	}
-	.icon-btn:hover {
-		color: #007bff;
-	}
-</style>
