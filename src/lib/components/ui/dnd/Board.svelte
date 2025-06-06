@@ -8,6 +8,7 @@
 	import { DiamondPlus, BrushCleaning, Trash2, FilePlus } from '@lucide/svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
 	const flipDurationMs = 200;
+
 	function addBlank() {
 		board.update((currentBoard) => {
 			const last = currentBoard[currentBoard.length - 1];

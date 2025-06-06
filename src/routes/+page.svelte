@@ -6,7 +6,7 @@
 	import { goto } from '$app/navigation';
 	import { board, items } from '$lib/stores.js'; // Assuming you have a store for board and items
 
-	import { FilePlus, RotateCcw } from '@lucide/svelte';
+	import { RotateCcw } from '@lucide/svelte';
 
 	function handleSelection() {
 		goto('/tradeoffs');
