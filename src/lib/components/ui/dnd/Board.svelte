@@ -47,7 +47,7 @@
 		>
 			<div class="mb-2 flex items-center justify-between">
 				{#if !column.isBlank}
-					<span>{column.rank}</span>
+					<span>Rank {column.rank}</span>
 				{:else}
 					<span class="text-gray-400">Blank Card</span>
 				{/if}

@@ -6,7 +6,7 @@
 	import { goto } from '$app/navigation';
 	import { board, items } from '$lib/stores.js'; // Assuming you have a store for board and items
 
-	import { FilePlus } from '@lucide/svelte';
+	import { FilePlus, RotateCcw } from '@lucide/svelte';
 
 	function handleSelection() {
 		goto('/tradeoffs');
@@ -53,10 +53,16 @@
 			</div>
 			<!-- Right: Placeholder div (smaller) -->
 			<div class="flex min-h-[8rem] flex-[1] items-center justify-center rounded">
-				<Button onclick={addBlank} class="btn preset-filled-primary-500">
-					<FilePlus class="mr-2 size-4" />
-					Insert Blank Card
-				</Button>
+				<div class="flex flex-col gap-4">
+					<Button onclick={addBlank} class="btn preset-filled-primary-500">
+						<FilePlus class="mr-2 size-4" />
+						Insert Blank Card
+					</Button>
+					<Button onclick={handleReset} class="btn preset-filled-secondary-500">
+						<RotateCcw class="mr-2 size-4" />
+						Reset
+					</Button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -68,7 +74,6 @@
 		<!-- Bottom row content -->
 		<div class="flex justify-end gap-4">
 			<Button onclick={addColumn}>Add Rank</Button>
-			<Button onclick={handleReset}>Reset</Button>
 			<Button type="button" class="btn preset-filled-primary-500" onclick={handleSelection}>
 				Next
 			</Button>
