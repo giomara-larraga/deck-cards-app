@@ -6,6 +6,8 @@ export type Card = {
 
 export type BoardItem = {
     id: number;
-    name: string;
+    rank: number;
+    value: number;
+    isBlank: boolean;
     items: any[]; // refine as needed
   };

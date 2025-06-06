@@ -3,7 +3,7 @@ import type { BoardItem } from './types';
 import { cards } from "./constants";
 
 const initialBoard: BoardItem[] = [
-  { id: 1, name: "Rank 1", items: [] },
+  { id: 1, rank: 1, value:1, isBlank:false, items: [] },
 ];
 
 export const board = writable<BoardItem[]>(initialBoard);

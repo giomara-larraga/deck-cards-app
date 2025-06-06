@@ -6,19 +6,39 @@
 	import { goto } from '$app/navigation';
 	import { board, items } from '$lib/stores.js'; // Assuming you have a store for board and items
 
+	import { FilePlus } from '@lucide/svelte';
+
 	function handleSelection() {
 		goto('/tradeoffs');
 	}
 
 	function handleReset() {
-		board.update(() => [{ id: 1, name: 'Rank 1', items: [] }]);
+		board.update(() => [{ id: 1, rank: 1, value: 1, isBlank: false, items: [] }]);
 		items.set([...cards]); // Assuming `items` is a writable store
 	}
 
 	function addColumn() {
 		board.update((currentBoard) => {
-			const newColumnId = currentBoard.length + 1;
-			return [...currentBoard, { id: newColumnId, name: `Rank ${newColumnId}`, items: [] }];
+			const newColumnId =
+				currentBoard[currentBoard.length - 1].rank + currentBoard[currentBoard.length - 1].value;
+			return [
+				...currentBoard,
+				{ id: newColumnId, rank: newColumnId, isBlank: false, value: 1, items: [] }
+			];
+		});
+	}
+	function addBlank() {
+		board.update((currentBoard) => {
+			const last = currentBoard[currentBoard.length - 1];
+			const newColumnId = last.rank + last.value;
+			// If the last column is blank, increment its value instead of adding a new one
+			if (last.isBlank) {
+				return [...currentBoard.slice(0, -1), { ...last, value: last.value + 1 }];
+			}
+			return [
+				...currentBoard,
+				{ id: newColumnId, rank: newColumnId, isBlank: true, value: 1, items: [] }
+			];
 		});
 	}
 </script>
@@ -32,9 +52,11 @@
 				<HorizontalList items={$items} />
 			</div>
 			<!-- Right: Placeholder div (smaller) -->
-			<div class="flex min-h-[8rem] flex-[1] items-center justify-center rounded bg-white shadow">
-				<!-- Your content here -->
-				Right side content
+			<div class="flex min-h-[8rem] flex-[1] items-center justify-center rounded">
+				<Button onclick={addBlank} class="btn preset-filled-primary-500">
+					<FilePlus class="mr-2 size-4" />
+					Insert Blank Card
+				</Button>
 			</div>
 		</div>
 	</div>

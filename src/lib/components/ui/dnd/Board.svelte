@@ -4,8 +4,9 @@
 	import { dndzone } from 'svelte-dnd-action';
 
 	import { board, items } from '$lib/stores';
-	import { Button } from '$lib/components/ui/Button/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { Home, Library, BrushCleaning, Trash2 } from '@lucide/svelte';
+	import { Input } from '$lib/components/ui/input/index.js';
 	const flipDurationMs = 200;
 
 	function handleDndConsiderCards(cid: number, e: any) {
@@ -38,42 +39,85 @@
 <section class="mb-10 flex h-[55vh] w-full flex-row gap-4 p-2">
 	{#each $board as column (column.id)}
 		<div
-			class="column m-4 flex h-full w-52 flex-col rounded-md border border-gray-800 bg-white p-2"
+			class="column m-4 flex h-full w-52 flex-col rounded-md border p-2
+				{column.isBlank
+				? 'card flex aspect-square max-h-32 max-w-[128px] min-w-[96px] flex-1 items-center justify-center rounded-md border bg-white p-4 shadow-md'
+				: 'border-gray-800 bg-white'}"
 			animate:flip={{ duration: flipDurationMs }}
 		>
 			<div class="mb-2 flex items-center justify-between">
-				<span>{column.name}</span>
+				{#if !column.isBlank}
+					<span>{column.rank}</span>
+				{:else}
+					<span class="text-gray-400">Blank Card</span>
+				{/if}
 				<div class="flex gap-2">
-					<Button
-						variant="outline"
-						size="icon"
-						title="Clean Column"
-						onclick={() => cleanColumn(column.id)}
-					>
-						<BrushCleaning />
-					</Button>
+					{#if !column.isBlank}
+						<Button
+							variant="outline"
+							size="icon"
+							title="Clean Column"
+							onclick={() => cleanColumn(column.id)}
+						>
+							<BrushCleaning />
+						</Button>
+					{/if}
 					<Button variant="outline" size="icon" title="Delete Column">
 						<Trash2 />
 					</Button>
 				</div>
 			</div>
-			<div
-				class="column-content flex h-full flex-col items-center overflow-y-scroll"
-				use:dndzone={{ items: column.items, flipDurationMs }}
-				on:consider={(/** @type {{ detail: { items: any; }; }} */ e) =>
-					handleDndConsiderCards(column.id, e)}
-				on:finalize={(/** @type {{ detail: { items: any; }; }} */ e) =>
-					handleDndFinalizeCards(column.id, e)}
-			>
-				{#each column.items as item (item.id)}
-					<div
-						class="card m-2 flex aspect-square max-h-32 max-w-[128px] min-w-[96px] flex-1 items-center justify-center rounded-md border bg-yellow-200 p-4 shadow-md"
-						animate:flip={{ duration: flipDurationMs }}
-					>
-						{item.shortname}
-					</div>
-				{/each}
-			</div>
+			{#if !column.isBlank}
+				<div
+					class="column-content flex h-full flex-col items-center overflow-y-scroll"
+					use:dndzone={{ items: column.items, flipDurationMs }}
+					on:consider={(/** @type {{ detail: { items: any; }; }} */ e) =>
+						handleDndConsiderCards(column.id, e)}
+					on:finalize={(/** @type {{ detail: { items: any; }; }} */ e) =>
+						handleDndFinalizeCards(column.id, e)}
+				>
+					{#each column.items as item (item.id)}
+						<div
+							class="card m-2 flex aspect-square max-h-32 max-w-[128px] min-w-[96px] flex-1 items-center justify-center rounded-md border bg-yellow-200 p-4 shadow-md"
+							animate:flip={{ duration: flipDurationMs }}
+						>
+							{item.shortname}
+						</div>
+					{/each}
+				</div>
+			{:else}
+				<div class="flex h-full items-center justify-center text-gray-400">
+					<Input
+						type="number"
+						placeholder="Value"
+						value={column.value}
+						onchange={(e) => {
+							const target = e.target as HTMLInputElement | null;
+							if (!target) return;
+							const newValue = Number(target.value);
+							board.update((current) => {
+								// Update the value for the changed column
+								const updated = current.map((col) =>
+									col.id === column.id ? { ...col, value: newValue } : col
+								);
+
+								// Update ranks: first column stays, others are prev.rank + prev.value
+								let prevRank = updated[0]?.rank ?? 1;
+								const withRanks = updated.map((col, idx) => {
+									if (idx === 0) {
+										prevRank = col.rank;
+										return col;
+									}
+									const newRank = prevRank + updated[idx - 1].value;
+									prevRank = newRank;
+									return { ...col, rank: newRank };
+								});
+								return withRanks;
+							});
+						}}
+					/>
+				</div>
+			{/if}
 		</div>
 	{/each}
 </section>
