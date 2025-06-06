@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { board } from '$lib/stores';
+	import { Button } from '$lib/components/ui/button/index.js';
+
+	let weights;
 
 	// Collapse consecutive empty ranks in the middle into a single blank rank with summed value
 	$: processedBoard = (() => {
@@ -51,6 +54,43 @@
 		}
 		return result;
 	})();
+
+	// Get all ranks in the board that have at least one item
+	$: nonEmptyRanks = $board
+		.filter((col) => col.items && col.items.length > 0)
+		.map((col) => col.rank);
+
+	// Compute weights for each non-empty rank
+	function computeWeights() {
+		if (nonEmptyRanks.length === 0) return;
+
+		const first_rank = nonEmptyRanks[0];
+		const last_rank = nonEmptyRanks[nonEmptyRanks.length - 1];
+
+		nonEmptyRanks.forEach((rank) => {
+			const col = $board.find((c) => c.rank === rank);
+			const itemNames = col?.items.map((item) => item.name ?? item.shortname ?? item) ?? [];
+			// Weight formula: first_rank * 2^((current_rank - first_rank)/(last_rank - first_rank))
+			let weight = first_rank;
+			if (last_rank !== first_rank) {
+				weight = first_rank * Math.pow(2, (rank - first_rank) / (last_rank - first_rank));
+			}
+			console.log(`rank ${rank} has [${itemNames.join(', ')}] items, weight: ${weight}`);
+		});
+	}
+	// Compute weights for each non-empty rank and store in an array
+	$: weights = (() => {
+		if (nonEmptyRanks.length === 0) return [];
+		const first_rank = nonEmptyRanks[0];
+		const last_rank = nonEmptyRanks[nonEmptyRanks.length - 1];
+		return nonEmptyRanks.map((rank) => {
+			let weight = first_rank;
+			if (last_rank !== first_rank) {
+				weight = first_rank * Math.pow(2, (rank - first_rank) / (last_rank - first_rank));
+			}
+			return weight;
+		});
+	})();
 </script>
 
 <h2 class="mb-4 text-xl font-bold">Board State</h2>
@@ -72,3 +112,4 @@
 		</li>
 	{/each}
 </ul>
+<p>Weights: [{weights.join(', ')}]</p>

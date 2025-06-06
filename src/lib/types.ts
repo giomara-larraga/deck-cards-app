@@ -2,6 +2,10 @@ export type Card = {
     id: number;
     name: string;
     shortname: string;
+    min: number;
+    max:number;
+    average: number;
+    median: number;
   };
 
 export type BoardItem = {
