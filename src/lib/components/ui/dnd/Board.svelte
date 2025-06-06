@@ -5,9 +5,34 @@
 
 	import { board, items } from '$lib/stores';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Home, Library, BrushCleaning, Trash2 } from '@lucide/svelte';
+	import { DiamondPlus, BrushCleaning, Trash2, FilePlus } from '@lucide/svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
 	const flipDurationMs = 200;
+	function addBlank() {
+		board.update((currentBoard) => {
+			const last = currentBoard[currentBoard.length - 1];
+			const newColumnId = last.rank + last.value;
+			// If the last column is blank, increment its value instead of adding a new one
+			if (last.isBlank) {
+				return [...currentBoard.slice(0, -1), { ...last, value: last.value + 1 }];
+			}
+			return [
+				...currentBoard,
+				{ id: newColumnId, rank: newColumnId, isBlank: true, value: 1, items: [] }
+			];
+		});
+	}
+
+	function addColumn() {
+		board.update((currentBoard) => {
+			const newColumnId =
+				currentBoard[currentBoard.length - 1].rank + currentBoard[currentBoard.length - 1].value;
+			return [
+				...currentBoard,
+				{ id: newColumnId, rank: newColumnId, isBlank: false, value: 1, items: [] }
+			];
+		});
+	}
 
 	function handleDndConsiderCards(cid: number, e: any) {
 		// Find the index of the column in the board array
@@ -36,7 +61,7 @@
 	}
 </script>
 
-<section class="mb-10 flex h-[55vh] w-full flex-row gap-4 p-2">
+<section class="mb-10 flex h-[55vh] w-full flex-wrap gap-4 p-2">
 	{#each $board as column (column.id)}
 		<div
 			class="column m-4 flex h-full w-52 flex-col rounded-md border p-2
@@ -120,4 +145,15 @@
 			{/if}
 		</div>
 	{/each}
+	<!-- Center the buttons vertically in the board section and stack them in a column -->
+	<div class="flex h-full flex-col items-center justify-center gap-4">
+		<Button variant="outline" onclick={addColumn} title="Add a new rank column">
+			<DiamondPlus />
+			New Rank
+		</Button>
+		<Button onclick={addBlank} variant="outline" title="Add a blank card">
+			<FilePlus />
+			Blank Card
+		</Button>
+	</div>
 </section>

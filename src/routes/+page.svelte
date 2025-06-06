@@ -16,31 +16,6 @@
 		board.update(() => [{ id: 1, rank: 1, value: 1, isBlank: false, items: [] }]);
 		items.set([...cards]); // Assuming `items` is a writable store
 	}
-
-	function addColumn() {
-		board.update((currentBoard) => {
-			const newColumnId =
-				currentBoard[currentBoard.length - 1].rank + currentBoard[currentBoard.length - 1].value;
-			return [
-				...currentBoard,
-				{ id: newColumnId, rank: newColumnId, isBlank: false, value: 1, items: [] }
-			];
-		});
-	}
-	function addBlank() {
-		board.update((currentBoard) => {
-			const last = currentBoard[currentBoard.length - 1];
-			const newColumnId = last.rank + last.value;
-			// If the last column is blank, increment its value instead of adding a new one
-			if (last.isBlank) {
-				return [...currentBoard.slice(0, -1), { ...last, value: last.value + 1 }];
-			}
-			return [
-				...currentBoard,
-				{ id: newColumnId, rank: newColumnId, isBlank: true, value: 1, items: [] }
-			];
-		});
-	}
 </script>
 
 <div class="grid h-screen grid-rows-[auto_1fr_auto]">
@@ -54,13 +29,12 @@
 			<!-- Right: Placeholder div (smaller) -->
 			<div class="flex min-h-[8rem] flex-[1] items-center justify-center rounded">
 				<div class="flex flex-col gap-4">
-					<Button onclick={addBlank} class="btn preset-filled-primary-500">
-						<FilePlus class="mr-2 size-4" />
-						Insert Blank Card
-					</Button>
 					<Button onclick={handleReset} class="btn preset-filled-secondary-500">
 						<RotateCcw class="mr-2 size-4" />
 						Reset
+					</Button>
+					<Button type="button" class="btn preset-filled-primary-500" onclick={handleSelection}>
+						Next
 					</Button>
 				</div>
 			</div>
@@ -69,14 +43,5 @@
 	<div class="bg-white p-4">
 		<!-- Middle row content -->
 		<Board />
-	</div>
-	<div class="bg-gray-200 p-4">
-		<!-- Bottom row content -->
-		<div class="flex justify-end gap-4">
-			<Button onclick={addColumn}>Add Rank</Button>
-			<Button type="button" class="btn preset-filled-primary-500" onclick={handleSelection}>
-				Next
-			</Button>
-		</div>
 	</div>
 </div>
