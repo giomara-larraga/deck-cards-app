@@ -63,7 +63,7 @@
 </script>
 
 <section class="mb-10 flex h-[55vh] w-full flex-wrap gap-4 p-2">
-	{#each $board as column (column.id)}
+	{#each $board as column, idx (column.id)}
 		<div
 			class="column m-4 flex h-full w-52 flex-col rounded-md border p-2
 				{column.isBlank
@@ -73,7 +73,17 @@
 		>
 			<div class="mb-2 flex items-center justify-between">
 				{#if !column.isBlank}
-					<span>Rank {column.rank}</span>
+					<span>
+						{#if idx === 0}
+							Most important
+						{:else if idx === 1}
+							Second most important
+						{:else if idx === $board.length - 1}
+							Least important
+						{:else}
+							{column.rank}ᵗʰ most important
+						{/if}
+					</span>
 				{:else}
 					<span class="text-gray-400">Blank Card</span>
 				{/if}
