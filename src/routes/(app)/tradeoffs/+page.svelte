@@ -15,11 +15,12 @@
 	// Compute weights for each non-empty rank and store in an array
 	$: weights = (() => {
 		if (nonEmptyRanks.length === 0) return [];
-		console.log('Non-empty ranks:', nonEmptyRanks);
+		console.log('updated');
 		const first_rank = nonEmptyRanks[0];
 		const last_rank = nonEmptyRanks[nonEmptyRanks.length - 1];
 		return nonEmptyRanks.map((rank) => {
-			let weight = last_rank * Math.pow(3, (rank - last_rank) / (first_rank - last_rank));
+			let weight =
+				last_rank * Math.pow(N / (N - nValue), (rank - last_rank) / (first_rank - last_rank));
 
 			return weight;
 		});
@@ -33,7 +34,7 @@
 	let selectedR1 = 0;
 	let selectedR2 = 1;
 	let nValue: number = 0;
-	const N = 100; // or set to your actual max value
+	const N = 3; // or set to your actual max value
 </script>
 
 <div class="flex h-full min-h-screen">
@@ -70,6 +71,7 @@
 											: idx === nonEmptyRanks.length - 1
 												? 'Least important'
 												: `${idx + 1}ᵗʰ most important`}
+									{' '}(Rank {rank})
 								</option>
 							{/each}
 						</select>
@@ -87,6 +89,7 @@
 												: idx === nonEmptyRanks.length - 1
 													? 'Least important'
 													: `${idx + 1}ᵗʰ most important`}
+										{' '}(Rank {rank})
 									</option>
 								{/if}
 							{/each}

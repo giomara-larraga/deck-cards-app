@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, afterUpdate } from 'svelte';
 	import * as echarts from 'echarts';
 
 	export let ranks: string[][]; // Example: [['A', 'B'], ['C'], ['D', 'E'], ['F']]
@@ -7,9 +7,10 @@
 	export let rankNames: string[] = []; // New: names for each rank
 
 	let chartDiv: HTMLDivElement;
+	let chart: echarts.ECharts | null = null;
 
-	onMount(() => {
-		if (!ranks || !weights || ranks.length !== weights.length) return;
+	function setChart() {
+		if (!ranks || !weights || ranks.length !== weights.length || !chartDiv) return;
 
 		const pieData = weights.map((value, i) => ({
 			value: parseFloat(value.toFixed(2)),
@@ -27,8 +28,7 @@
 					return (
 						`<span style="font-weight:bold;">${rankLine}</span><br>` +
 						itemsLines +
-						`<br><span style="font-size:0.95em;font-weight:bold;">Weight: </span><span>${params.data.value}</span>` +
-						'</span>'
+						`<br><span style="font-size:0.95em;font-weight:bold;">Weight: </span><span>${params.data.value}</span>`
 					);
 				},
 				show: false
@@ -66,10 +66,24 @@
 			]
 		};
 
-		const chart = echarts.init(chartDiv);
-		chart.setOption(option);
+		if (!chart) {
+			chart = echarts.init(chartDiv);
+		}
+		chart.setOption(option, true);
+	}
 
-		return () => chart.dispose();
+	onMount(() => {
+		setChart();
+		return () => {
+			if (chart) {
+				chart.dispose();
+				chart = null;
+			}
+		};
+	});
+
+	afterUpdate(() => {
+		setChart();
 	});
 </script>
 
