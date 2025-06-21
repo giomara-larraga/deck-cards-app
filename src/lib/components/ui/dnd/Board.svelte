@@ -19,7 +19,7 @@
 			}
 			return [
 				...currentBoard,
-				{ id: newColumnId, rank: newColumnId, isBlank: true, value: 1, items: [] }
+				{ id: newColumnId, rank: newColumnId, computedRank: 1, isBlank: true, value: 1, items: [] }
 			];
 		});
 	}
@@ -30,7 +30,7 @@
 				currentBoard[currentBoard.length - 1].rank + currentBoard[currentBoard.length - 1].value;
 			return [
 				...currentBoard,
-				{ id: newColumnId, rank: newColumnId, isBlank: false, value: 1, items: [] }
+				{ id: newColumnId, rank: newColumnId, computedRank: 1, isBlank: false, value: 1, items: [] }
 			];
 		});
 	}

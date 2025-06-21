@@ -3,7 +3,7 @@ import type {Card} from "$lib/types.ts";
 export const cards:Card[] = [
   { id: 31, 
     name: "Ammonia emissions from agriculture (2_6)", 
-    shortname:"Ammonia",
+    shortname:"I",
     min: 6.80,
     max: 82.40,
     average: 25.52,
@@ -12,7 +12,7 @@ export const cards:Card[] = [
   {
     id: 32,
     name: "Exposure to air pollution by particulate matter (11_5)", 
-    shortname: "Air pollution",
+    shortname: "II",
     min: 4.80,
     max: 31.10,
     average: 14.92,
@@ -21,7 +21,7 @@ export const cards:Card[] = [
   {
     id: 33,
     name: "Average CO2 emissions per km from new passenger cars (12_3)",
-    shortname:"CO2",
+    shortname:"III",
     min: 82.30,
     max: 162.00,
     average: 125.19,
@@ -29,7 +29,7 @@ export const cards:Card[] = [
   },
   { id: 34, 
     name: "Greenhouse gas emissions by source sector (13_1)", 
-    shortname:"Gas (by source)" ,
+    shortname:"IV" ,
     min: 1.80,
     max: 25.20,
     average: 8.64,
@@ -38,7 +38,7 @@ export const cards:Card[] = [
   {
     id: 35,
     name: "Greenhouse gas emissions intensity of energy consumption (13_2)",
-    shortname:"Gas (intensity)",
+    shortname:"V",
     min: 58.80,
     max: 124.50,
     average: 88.37,

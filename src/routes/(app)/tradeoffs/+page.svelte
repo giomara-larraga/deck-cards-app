@@ -9,8 +9,7 @@
 	// Get all ranks in the board that have at least one item
 	$: nonEmptyRanks = $board
 		.filter((col) => col.items && col.items.length > 0)
-		.map((col) => col.rank)
-		.reverse();
+		.map((col) => col.computedRank);
 
 	// Compute weights for each non-empty rank and store in an array
 	$: weights = (() => {
@@ -34,7 +33,12 @@
 	let selectedR1 = 0;
 	let selectedR2 = 1;
 	let nValue: number = 0;
-	const N = 3; // or set to your actual max value
+	let N = 3; // or set to your actual max value
+	$: if ((selectedR1, selectedR2)) {
+		if (selectedR2 > selectedR1) {
+			N = selectedR2 - selectedR1; // Update N based on the selected ranks
+		}
+	}
 </script>
 
 <div class="flex h-full min-h-screen">
@@ -60,7 +64,7 @@
 			<div class="flex max-w-md flex-1 flex-col gap-4">
 				{#if nonEmptyRanks.length >= 2}
 					<label>
-						<span class="font-semibold">Indicator to improve ($I_r_1$):</span>
+						<span class="font-semibold">Class to improve ($I_r_1$):</span>
 						<select bind:value={selectedR1} class="mt-1 w-full rounded border p-2">
 							{#each nonEmptyRanks as rank, idx}
 								<option value={idx}>
@@ -77,7 +81,7 @@
 						</select>
 					</label>
 					<label>
-						<span class="font-semibold">Indicator to impair ($I_r_2$):</span>
+						<span class="font-semibold">Class to impair ($I_r_2$):</span>
 						<select bind:value={selectedR2} class="mt-1 w-full rounded border p-2">
 							{#each nonEmptyRanks as rank, idx}
 								{#if idx > selectedR1}
@@ -99,8 +103,9 @@
 						<div class="mt-4 rounded border bg-blue-50 p-4">
 							<p class="mb-2">
 								<b>Question:</b><br />
-								In order to improve <b>I<sub>r₁</sub></b> from its worst (0) to its best (<b>N</b>)
-								value, <br />
+								In order to improve <b>I<sub>r₁</sub></b> from its worst (0) to its best (<b
+									>N = {N}</b
+								>) value, <br />
 								how much would you be willing to impair <b>I<sub>r₂</sub></b> (i.e., let an element
 								in
 								<b>I<sub>r₂</sub></b>

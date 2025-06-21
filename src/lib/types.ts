@@ -11,6 +11,7 @@ export type Card = {
 export type BoardItem = {
     id: number;
     rank: number;
+    computedRank: number;
     value: number;
     isBlank: boolean;
     items: any[]; // refine as needed
