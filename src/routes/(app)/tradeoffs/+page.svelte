@@ -44,21 +44,7 @@
 <div class="flex h-full min-h-screen">
 	<!-- Sidebar -->
 	<aside class="flex h-full min-h-screen w-full max-w-xs flex-col border-r bg-gray-100 p-4">
-		<h2 class="mb-2 text-xl font-bold">Rank Weights Overview</h2>
-		<p class="mb-4 text-sm text-gray-600">
-			This chart shows the relative importance of each rank based on your current ranking. You can
-			modify the ranking at any time.
-		</p>
-		<Donut ranks={nonEmptyRanksArray} {weights} />
-		<div class="mt-auto flex justify-center">
-			<a href="/" class="block w-full max-w-xs">
-				<Button class="w-full">Modify ranking</Button>
-			</a>
-		</div>
-	</aside>
-	<!-- Main content -->
-	<main class="flex-1 p-4">
-		<h2 class="mb-4 text-lg font-bold">Trade-off Assessment</h2>
+		<h2 class="mb-2 text-xl font-bold">Trade-off Assessment</h2>
 		<div class="flex flex-row gap-8">
 			<!-- Left: Trade-off selection and question -->
 			<div class="flex max-w-md flex-1 flex-col gap-4">
@@ -127,10 +113,24 @@
 					<p class="text-gray-500">You need at least two non-empty ranks to assess a trade-off.</p>
 				{/if}
 			</div>
-			<!-- Right: Heatmap -->
-			<div class="min-w-[350px] flex-1">
-				<RankTradeoffHeatmap {weights} />
-			</div>
+		</div>
+	</aside>
+	<!-- Main content -->
+	<main class="flex-1 p-4">
+		<h2 class="mb-2 text-xl font-bold">Rank Weights Overview</h2>
+		<p class="mb-4 text-sm text-gray-600">
+			This chart shows the relative importance of each rank based on your current ranking. You can
+			modify the ranking at any time.
+		</p>
+		<Donut ranks={nonEmptyRanksArray} {weights} />
+		<div class="mt-auto flex justify-center">
+			<a href="/" class="block w-full max-w-xs">
+				<Button class="w-full">Modify ranking</Button>
+			</a>
 		</div>
 	</main>
+	<!-- Right: Heatmap -->
+	<div class="min-w-[350px] flex-1">
+		<RankTradeoffHeatmap {weights} />
+	</div>
 </div>
