@@ -114,6 +114,11 @@
 				{/if}
 			</div>
 		</div>
+		<div class="mt-auto flex justify-center">
+			<a href="/" class="block w-full max-w-xs">
+				<Button class="w-full">Modify ranking</Button>
+			</a>
+		</div>
 	</aside>
 	<!-- Main content -->
 	<main class="flex-1 p-4">
@@ -123,11 +128,6 @@
 			modify the ranking at any time.
 		</p>
 		<Donut ranks={nonEmptyRanksArray} {weights} />
-		<div class="mt-auto flex justify-center">
-			<a href="/" class="block w-full max-w-xs">
-				<Button class="w-full">Modify ranking</Button>
-			</a>
-		</div>
 	</main>
 	<!-- Right: Heatmap -->
 	<div class="min-w-[350px] flex-1">
