@@ -3,6 +3,7 @@
 	import Donut from '$lib/components/ui/donutpie/donut.svelte';
 	import RankTradeoffHeatmap from '$lib/components/ui/heatmap/RankTradeoffHeatmap.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import Dotchart from '$lib/components/ui/dotchart/dotchart.svelte';
 
 	let weights: number[] = [];
 
@@ -30,10 +31,23 @@
 		.filter((col) => col.items && col.items.length > 0)
 		.map((col) => col.items.map((item) => item.shortname ?? String(item)));
 
+	$: rankedItems = $board
+		.filter((col) => col.items && col.items.length > 0)
+		.flatMap((col) =>
+			col.items.map((item) => ({
+				name: item.shortname ?? String(item),
+				rank: col.computedRank
+			}))
+		);
+
 	let selectedR1 = 0;
 	let selectedR2 = 1;
 	let nValue: number = 0;
 	let N = 3; // or set to your actual max value
+
+	$: toImprove = nonEmptyRanks[selectedR1];
+	$: toImpair = nonEmptyRanks[selectedR2];
+
 	$: if ((selectedR1, selectedR2)) {
 		if (selectedR2 > selectedR1) {
 			N = selectedR2 - selectedR1; // Update N based on the selected ranks
@@ -122,15 +136,22 @@
 	</aside>
 	<!-- Main content -->
 	<main class="flex-1 p-4">
-		<h2 class="mb-2 text-xl font-bold">Rank Weights Overview</h2>
+		<h2 class="mb-2 text-xl font-bold">Inverted ranks</h2>
 		<p class="mb-4 text-sm text-gray-600">
-			This chart shows the relative importance of each rank based on your current ranking. You can
-			modify the ranking at any time.
+			These are the inverted ranks of the items in your current ranking, where a higher rank means
+			more important.
 		</p>
-		<Donut ranks={nonEmptyRanksArray} {weights} />
+		<Dotchart ranks={rankedItems} bind:toImprove bind:toImpair />
 	</main>
 	<!-- Right: Heatmap -->
-	<div class="min-w-[350px] flex-1">
-		<RankTradeoffHeatmap {weights} />
+	<div class="min-w-[350px] flex-1 p-4">
+		<h2 class="mb-2 text-xl font-bold">Weights Overview</h2>
+		<p class="mb-4 text-sm text-gray-600">
+			This chart shows the relative importance of each rank based on your current ranking, the class
+			to improve ({toImprove}), and the class to impair ({toImpair}).
+		</p>
+		<Donut ranks={nonEmptyRanksArray} {weights} />
+		<!-- 		<RankTradeoffHeatmap {weights} />
+ -->
 	</div>
 </div>
