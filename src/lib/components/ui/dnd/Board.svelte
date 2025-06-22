@@ -67,8 +67,8 @@
 		<div
 			class="column m-4 flex h-full w-52 flex-col rounded-md border p-2
 				{column.isBlank
-				? 'card flex aspect-square max-h-32 max-w-[128px] min-w-[96px] flex-1 items-center justify-center rounded-md border bg-white p-4 shadow-md'
-				: 'border-gray-800 bg-white'}"
+				? 'card flex aspect-square max-h-32 max-w-[128px] min-w-[96px] flex-1 items-center justify-center rounded-md border border-gray-400 bg-white p-4 shadow-md'
+				: 'border-gray-400 bg-white shadow-md'}"
 			animate:flip={{ duration: flipDurationMs }}
 		>
 			<div class="mb-2 flex items-center justify-between">
@@ -85,23 +85,9 @@
 						{/if}
 					</span>
 				{:else}
-					<span class="text-gray-400">Blank Card</span>
+					<span class="text-gray-600">Blank Card</span>
 				{/if}
-				<div class="flex gap-2">
-					{#if !column.isBlank}
-						<Button
-							variant="outline"
-							size="icon"
-							title="Clean Column"
-							onclick={() => cleanColumn(column.id)}
-						>
-							<BrushCleaning />
-						</Button>
-					{/if}
-					<Button variant="outline" size="icon" title="Delete Column">
-						<Trash2 />
-					</Button>
-				</div>
+				<div class="flex gap-2"></div>
 			</div>
 			{#if !column.isBlank}
 				<div
