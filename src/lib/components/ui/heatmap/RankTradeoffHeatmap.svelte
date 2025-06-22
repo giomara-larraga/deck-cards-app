@@ -11,7 +11,7 @@
 		if (!weights || weights.length === 0 || !chartDiv) return;
 
 		const N = weights.length;
-		const labels = Array.from({ length: N }, (_, i) => `Rank ${i + 1}`);
+		const labels = Array.from({ length: N }, (_, i) => `I${i + 1}`);
 
 		const heatmapData = [];
 		for (let i = 0; i < N; i++) {
@@ -109,4 +109,4 @@
 	});
 </script>
 
-<div bind:this={chartDiv} style="width: 100%; height: 500px;" />
+<div bind:this={chartDiv} style="width: 100%; height: 300px;" />

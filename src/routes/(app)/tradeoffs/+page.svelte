@@ -45,100 +45,115 @@
 	let nValue: number = 0;
 	let N = 3; // or set to your actual max value
 
+	//$: N = Math.max(nonEmptyRanks[selectedR2] - nonEmptyRanks[selectedR1], 0); // Ensure N is at least 3
 	$: toImprove = nonEmptyRanks[selectedR1];
 	$: toImpair = nonEmptyRanks[selectedR2];
 
 	$: if ((selectedR1, selectedR2)) {
 		if (selectedR2 > selectedR1) {
-			N = selectedR2 - selectedR1; // Update N based on the selected ranks
+			//N = toImprove - toImpair; // Update N based on the selected ranks
 		}
 	}
 </script>
 
-<div class="flex h-full min-h-screen">
-	<!-- Sidebar -->
-	<aside class="flex h-full min-h-screen w-full max-w-xs flex-col border-r bg-gray-100 p-4">
-		<h2 class="mb-2 text-xl font-bold">Trade-off Assessment</h2>
-		<div class="flex flex-row gap-8">
-			<!-- Left: Trade-off selection and question -->
-			<div class="flex max-w-md flex-1 flex-col gap-4">
-				{#if nonEmptyRanks.length >= 2}
-					<label>
-						<span class="font-semibold">Class to improve (<b>I<sub>r₁</sub></b>):</span>
-						<select bind:value={selectedR1} class="mt-1 w-full rounded border p-2">
-							{#each nonEmptyRanks as rank, idx}
-								<option value={idx}>
-									I{idx + 1}(Rank {rank})
-								</option>
-							{/each}
-						</select>
-					</label>
-					<label>
-						<span class="font-semibold">Class to impair (<b>I<sub>r₂</sub></b>):</span>
-						<select bind:value={selectedR2} class="mt-1 w-full rounded border p-2">
-							{#each nonEmptyRanks as rank, idx}
-								{#if idx > selectedR1}
+<div class="flex h-full min-h-screen flex-col">
+	<div class="flex flex-1">
+		<!-- Sidebar -->
+		<aside class="flex h-full min-h-screen w-full max-w-xs flex-col border-r bg-gray-100 p-4">
+			<h2 class="mb-2 text-xl font-bold">Trade-off Assessment</h2>
+			<div class="flex flex-row gap-8">
+				<!-- Left: Trade-off selection and question -->
+				<div class="flex max-w-md flex-1 flex-col gap-4">
+					{#if nonEmptyRanks.length >= 2}
+						<label>
+							<span class="font-semibold">Class to improve (<b>I<sub>r₁</sub></b>):</span>
+							<select bind:value={selectedR1} class="mt-1 w-full rounded border p-2">
+								{#each nonEmptyRanks as rank, idx}
 									<option value={idx}>
 										I{idx + 1}(Rank {rank})
 									</option>
-								{/if}
-							{/each}
-						</select>
-					</label>
-					{#if selectedR2 > selectedR1}
-						<div class="mt-4 rounded border bg-blue-50 p-4">
-							<p class="mb-2">
-								<b>Question:</b><br />
-								In order to improve <b>I<sub>{selectedR1 + 1}</sub></b> from its worst (0) to its
-								best (<b>N = {N}</b>) value, <br />
-								how much would you be willing to impair <b>I<sub>{selectedR2 + 1}</sub></b> (i.e.,
-								let an element in
-								<b>I<sub>{selectedR2 + 1}</sub></b>
-								deteriorate from <b>N</b> down to what value <b>n</b>)?
-							</p>
-							<label>
-								<span class="font-semibold">Enter value <b>n</b> (between 0 and N):</span>
-								<input
-									type="number"
-									min="0"
-									max={N}
-									bind:value={nValue}
-									class="ml-2 w-24 rounded border p-2"
-								/>
-							</label>
-						</div>
+								{/each}
+							</select>
+						</label>
+						<label>
+							<span class="font-semibold">Class to impair (<b>I<sub>r₂</sub></b>):</span>
+							<select bind:value={selectedR2} class="mt-1 w-full rounded border p-2">
+								{#each nonEmptyRanks as rank, idx}
+									{#if idx > selectedR1}
+										<option value={idx}>
+											I{idx + 1}(Rank {rank})
+										</option>
+									{/if}
+								{/each}
+							</select>
+						</label>
+						{#if selectedR2 > selectedR1}
+							<div class="mt-4 rounded border bg-blue-50 p-4">
+								<p class="mb-2">
+									<b>Question:</b><br />
+									In order to improve <b>I<sub>{selectedR1 + 1}</sub></b> from its worst (0) to its
+									best (<b>N = {N}</b>) value, <br />
+									how much would you be willing to impair <b>I<sub>{selectedR2 + 1}</sub></b> (i.e.,
+									let an element in
+									<b>I<sub>{selectedR2 + 1}</sub></b>
+									deteriorate from <b>N</b> down to what value <b>n</b>)?
+								</p>
+								<label>
+									<span class="font-semibold">Enter value <b>n</b> (between 0 and N):</span>
+									<input
+										type="number"
+										min="0"
+										max={N}
+										bind:value={nValue}
+										class="ml-2 w-24 rounded border p-2"
+									/>
+								</label>
+							</div>
+						{/if}
+					{:else}
+						<p class="text-gray-500">
+							You need at least two non-empty ranks to assess a trade-off.
+						</p>
 					{/if}
-				{:else}
-					<p class="text-gray-500">You need at least two non-empty ranks to assess a trade-off.</p>
-				{/if}
+				</div>
 			</div>
-		</div>
-		<div class="mt-auto flex justify-center">
-			<a href="/" class="block w-full max-w-xs">
-				<Button class="w-full">Modify ranking</Button>
-			</a>
-		</div>
-	</aside>
-	<!-- Main content -->
-	<main class="flex-1 p-4">
-		<h2 class="mb-2 text-xl font-bold">Inverted ranks</h2>
-		<p class="mb-4 text-sm text-gray-600">
-			These are the inverted ranks of the items in your current ranking, where a higher rank means
-			more important.
-		</p>
-		<Dotchart ranks={rankedItems} bind:toImprove bind:toImpair />
-	</main>
-	<!-- Right: Heatmap -->
-	<div class="min-w-[350px] flex-1 p-4">
-		<h2 class="mb-2 text-xl font-bold">Weights Overview</h2>
-		<p class="mb-4 text-sm text-gray-600">
-			This chart shows the relative importance of each rank based on your current ranking, the class
-			to improve (<b>I<sub>{selectedR1 + 1}</sub></b>), the class to impair (<b
-				>I<sub>{selectedR2 + 1}</sub></b
-			>), and N={nValue}.
-		</p>
-		<Donut ranks={nonEmptyRanksArray} {weights} />
-		<!-- 		<RankTradeoffHeatmap {weights} />
- -->
+			<div class="mt-auto flex justify-center">
+				<a href="/" class="block w-full max-w-xs">
+					<Button class="w-full">Modify ranking</Button>
+				</a>
+			</div>
+		</aside>
+		<!-- Main content area -->
+		<main class="flex min-h-0 flex-1 flex-col overflow-auto p-4">
+			<!-- Top row: Dotchart and Donut side by side -->
+			<div class="min-w[350px] flex w-full flex-row gap-8">
+				<div class="flex-1">
+					<h2 class="mb-2 text-xl font-bold">Inverted ranks</h2>
+					<p class="mb-4 text-sm text-gray-600">
+						These are the inverted ranks of the items in your current ranking, where a higher rank
+						means more important.
+					</p>
+					<Dotchart ranks={rankedItems} bind:toImprove bind:toImpair />
+				</div>
+				<div class="min-w[350px] flex-1">
+					<h2 class="mb-2 text-xl font-bold">Weights Overview</h2>
+					<p class="mb-4 text-sm text-gray-600">
+						This chart shows the relative importance of each rank based on your current ranking, the
+						class to improve (<b>I<sub>{selectedR1 + 1}</sub></b>), the class to impair (<b
+							>I<sub>{selectedR2 + 1}</sub></b
+						>), and N={nValue}.
+					</p>
+					<Donut ranks={nonEmptyRanksArray} {weights} />
+				</div>
+			</div>
+			<!-- Bottom row: Heatmap full width below both charts -->
+			<div class="mb-2 w-full">
+				<h2 class="mb-2 text-xl font-bold">Trade-offs</h2>
+				<p class="text-sm text-gray-600">
+					This heatmap shows the trade-offs between the ranks based on the computed weights.
+				</p>
+				<RankTradeoffHeatmap {weights} />
+			</div>
+		</main>
 	</div>
 </div>

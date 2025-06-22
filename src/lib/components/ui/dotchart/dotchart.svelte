@@ -122,4 +122,4 @@
 	$: setChart();
 </script>
 
-<div bind:this={chartDiv} style="width: 100%; height: 400px;" />
+<div bind:this={chartDiv} style="width: 100%; height: 300px;" />
