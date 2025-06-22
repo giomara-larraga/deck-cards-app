@@ -7,6 +7,8 @@
 	let chartDiv: HTMLDivElement;
 	let chart: echarts.ECharts | null = null;
 
+	let numWeights = weights ? weights.length : 0;
+
 	function setChart() {
 		if (!weights || weights.length === 0 || !chartDiv) return;
 

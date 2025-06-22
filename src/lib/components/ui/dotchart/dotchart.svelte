@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, afterUpdate } from 'svelte';
 	import * as echarts from 'echarts';
+	import { Bold } from '@lucide/svelte';
 
 	export let ranks: { name: string; rank: number }[];
 	export let toImprove: number = -1;
@@ -30,7 +31,7 @@
 				continue; // Skip empty ranks
 			} // Skip empty ranks
 			else {
-				rankLabels[i - 1] = `I{sub|${classIndex}}`;
+				rankLabels[i - 1] = `{bold|I}{sub|${classIndex}}`;
 				classIndex++;
 			}
 		}
@@ -65,8 +66,13 @@
 						formatter: (value: string) => value,
 						verticalAlign: 'top',
 						rich: {
+							bold: {
+								fontWeight: 'bold',
+								fontSize: 14
+							},
 							sub: {
-								fontSize: 10, // Increase as needed
+								fontWeight: 'bold',
+								fontSize: 10,
 								verticalAlign: 'bottom'
 							}
 						}

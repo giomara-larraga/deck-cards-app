@@ -4,18 +4,19 @@
 
 	export let ranks: string[][]; // Example: [['A', 'B'], ['C'], ['D', 'E'], ['F']]
 	export let weights: number[]; // Example: [0, 1, 1.15, 2]
+	export let Nweights: number[]; // Normalized weights for each rank
 	export let rankNames: string[] = []; // New: names for each rank
 
 	let chartDiv: HTMLDivElement;
 	let chart: echarts.ECharts | null = null;
+	let numRanks = weights ? weights.length : 0;
 
 	function setChart() {
 		if (!ranks || !weights || ranks.length !== weights.length || !chartDiv) return;
 
 		const pieData = weights.map((value, i) => ({
 			value: parseFloat(value.toFixed(2)),
-			// Add a bullet point before each item in the rank
-			name: `${rankNames[i] ?? `I${i + 1}`}\nWeight: ${value.toFixed(2)}`
+			name: `{rank|${rankNames[i] ?? `I${numRanks - i}`}}\nWeight: ${value.toFixed(2)}\nNormalized: ${(Nweights[i] * 100).toFixed(1)}%`
 		}));
 
 		const option = {
@@ -49,8 +50,14 @@
 						borderRadius: 10
 					},
 					label: {
-						show: true
-						//position: 'center'
+						show: true,
+						formatter: '{b}',
+						rich: {
+							rank: {
+								fontWeight: 'bold',
+								fontSize: 16
+							}
+						}
 					},
 					emphasis: {
 						label: {
