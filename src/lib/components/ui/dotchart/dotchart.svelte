@@ -11,7 +11,29 @@
 
 	function setChart() {
 		if (!ranks || !chartDiv) return;
-		console.log('Setting chart with ranks:', ranks, 'toImprove:', toImprove, 'toImpair:', toImpair);
+
+		// Get unique ranks sorted ascending
+		const uniqueRanks = Array.from(new Set(ranks.map((item) => item.rank))).sort((a, b) => a - b);
+
+		// Find the max rank to size the label array
+		const maxRank = Math.max(...ranks.map((item) => item.rank), 1);
+
+		// Fill rankLabels so that index i corresponds to rank i+1
+		const rankLabels: string[] = Array(maxRank).fill('');
+		let classIndex = 1;
+		for (let i = 1; i <= maxRank; i++) {
+			const names = ranks
+				.filter((item) => item.rank === i)
+				.map((item) => item.name)
+				.join(', ');
+			if (names.length === 0) {
+				continue; // Skip empty ranks
+			} // Skip empty ranks
+			else {
+				rankLabels[i - 1] = `I{sub|${classIndex}}`;
+				classIndex++;
+			}
+		}
 
 		const option = {
 			tooltip: {
@@ -21,23 +43,43 @@
 			},
 			xAxis: {
 				type: 'category',
-				data: ranks.map((item) => item.name),
-				name: 'Items'
+				data: ranks.map((item) => item.name)
+				//name: 'Items'
 			},
-			yAxis: {
-				type: 'value',
-				inverse: false,
-				min: 1,
-				max: Math.max(...ranks.map((i) => i.rank)) + 1,
-				interval: 1,
-				axisLabel: {
-					formatter: (value: number) => `Rank ${value}`
+			yAxis: [
+				{
+					type: 'value',
+					inverse: false,
+					min: 1,
+					max: maxRank + 1,
+					interval: 1,
+					axisLabel: {
+						formatter: (value: number) => `Rank ${value}`
+					}
+				},
+				{
+					type: 'category',
+					position: 'right',
+					data: rankLabels,
+					axisLabel: {
+						formatter: (value: string) => value,
+						verticalAlign: 'top',
+						rich: {
+							sub: {
+								fontSize: 10, // Increase as needed
+								verticalAlign: 'bottom'
+							}
+						}
+					},
+					axisTick: { show: false },
+					axisLine: { show: false }
 				}
-			},
+			],
 			series: [
 				{
 					type: 'scatter',
 					symbolSize: 20,
+					yAxisIndex: 0,
 					data: ranks.map((item) => ({
 						name: item.name,
 						value: [item.name, item.rank],

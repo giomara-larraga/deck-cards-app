@@ -64,36 +64,22 @@
 			<div class="flex max-w-md flex-1 flex-col gap-4">
 				{#if nonEmptyRanks.length >= 2}
 					<label>
-						<span class="font-semibold">Class to improve ($I_r_1$):</span>
+						<span class="font-semibold">Class to improve (<b>I<sub>r₁</sub></b>):</span>
 						<select bind:value={selectedR1} class="mt-1 w-full rounded border p-2">
 							{#each nonEmptyRanks as rank, idx}
 								<option value={idx}>
-									{idx === 0
-										? 'Most important'
-										: idx === 1
-											? 'Second most important'
-											: idx === nonEmptyRanks.length - 1
-												? 'Least important'
-												: `${idx + 1}ᵗʰ most important`}
-									{' '}(Rank {rank})
+									I{idx + 1}(Rank {rank})
 								</option>
 							{/each}
 						</select>
 					</label>
 					<label>
-						<span class="font-semibold">Class to impair ($I_r_2$):</span>
+						<span class="font-semibold">Class to impair (<b>I<sub>r₂</sub></b>):</span>
 						<select bind:value={selectedR2} class="mt-1 w-full rounded border p-2">
 							{#each nonEmptyRanks as rank, idx}
 								{#if idx > selectedR1}
 									<option value={idx}>
-										{idx === 0
-											? 'Most important'
-											: idx === 1
-												? 'Second most important'
-												: idx === nonEmptyRanks.length - 1
-													? 'Least important'
-													: `${idx + 1}ᵗʰ most important`}
-										{' '}(Rank {rank})
+										I{idx + 1}(Rank {rank})
 									</option>
 								{/if}
 							{/each}
@@ -103,12 +89,11 @@
 						<div class="mt-4 rounded border bg-blue-50 p-4">
 							<p class="mb-2">
 								<b>Question:</b><br />
-								In order to improve <b>I<sub>r₁</sub></b> from its worst (0) to its best (<b
-									>N = {N}</b
-								>) value, <br />
-								how much would you be willing to impair <b>I<sub>r₂</sub></b> (i.e., let an element
-								in
-								<b>I<sub>r₂</sub></b>
+								In order to improve <b>I<sub>{selectedR1 + 1}</sub></b> from its worst (0) to its
+								best (<b>N = {N}</b>) value, <br />
+								how much would you be willing to impair <b>I<sub>{selectedR2 + 1}</sub></b> (i.e.,
+								let an element in
+								<b>I<sub>{selectedR2 + 1}</sub></b>
 								deteriorate from <b>N</b> down to what value <b>n</b>)?
 							</p>
 							<label>
@@ -148,7 +133,9 @@
 		<h2 class="mb-2 text-xl font-bold">Weights Overview</h2>
 		<p class="mb-4 text-sm text-gray-600">
 			This chart shows the relative importance of each rank based on your current ranking, the class
-			to improve ({toImprove}), and the class to impair ({toImpair}).
+			to improve (<b>I<sub>{selectedR1 + 1}</sub></b>), the class to impair (<b
+				>I<sub>{selectedR2 + 1}</sub></b
+			>), and N={nValue}.
 		</p>
 		<Donut ranks={nonEmptyRanksArray} {weights} />
 		<!-- 		<RankTradeoffHeatmap {weights} />
