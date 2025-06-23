@@ -33,7 +33,7 @@
 
 <div class="grid h-screen grid-rows-[auto_1fr_auto]">
 	<!-- Top row: two columns, left for HorizontalList, right for a div -->
-	<div class="bg-gray-200 p-4">
+	<div class="border-b bg-gray-200 p-4">
 		<div class="flex flex-row gap-6">
 			<!-- Left: HorizontalList (larger) -->
 			<div class="flex flex-[2] justify-center">
@@ -53,7 +53,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="bg-white p-4">
+	<div class="p-4">
 		<!-- Middle row content -->
 		<Board />
 	</div>
