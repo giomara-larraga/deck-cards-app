@@ -2,17 +2,30 @@
 	import { onMount, afterUpdate } from 'svelte';
 	import * as echarts from 'echarts';
 
+	/**
+	 * Props:
+	 * - weights: Array of weights for each rank (should sum to 1 or be normalized).
+	 */
 	export let weights: number[];
-	let Nmax = 3;
+
+	let Nmax = 3; // Maximum value for the visualMap scale
 	let chartDiv: HTMLDivElement;
 	let chart: echarts.ECharts | null = null;
 
+	/**
+	 * Sets up and renders the heatmap chart using ECharts.
+	 * The heatmap visualizes trade-off intensities between ranks.
+	 * - Only lower triangle is filled (i > j), upper triangle is left blank.
+	 * - Each cell shows weights[j] / weights[i] for i > j.
+	 */
 	function setChart() {
 		if (!weights || weights.length === 0 || !chartDiv) return;
 
 		const N = weights.length;
+		// Generate axis labels: I{N}, I{N-1}, ..., I1
 		const labels = Array.from({ length: N }, (_, i) => `I${N - i}`);
 
+		// Build heatmap data: only fill lower triangle (i > j)
 		const heatmapData = [];
 		for (let i = 0; i < N; i++) {
 			for (let j = 0; j < N; j++) {
@@ -23,17 +36,13 @@
 				}
 			}
 		}
-		console.log('weights', weights);
-		console.log('heatmapData', heatmapData);
 
 		const option = {
 			tooltip: {
 				position: 'top',
 				formatter: (params: any) => {
 					const value = params.value[2];
-					if (value == null) {
-						return '';
-					}
+					if (value == null) return '';
 					if (typeof value === 'number') {
 						return `${labels[params.value[1]]} vs ${labels[params.value[0]]}: ${value.toFixed(2)}`;
 					}
@@ -76,8 +85,8 @@
 					label: {
 						show: true,
 						formatter: (params: any) =>
-							params.value[2] === '-'
-								? '-'
+							params.value[2] == null
+								? ''
 								: typeof params.value[2] === 'number'
 									? params.value[2].toFixed(2)
 									: ''
@@ -98,6 +107,7 @@
 		chart.setOption(option, true);
 	}
 
+	// Initialize chart on mount and update on prop changes
 	onMount(() => {
 		setChart();
 		return () => {
@@ -113,4 +123,9 @@
 	});
 </script>
 
+<!--
+    Heatmap container.
+    - width: 100% of parent
+    - height: 300px (adjust as needed)
+-->
 <div bind:this={chartDiv} style="width: 100%; height: 300px;" />

@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { onMount, afterUpdate } from 'svelte';
 	import * as echarts from 'echarts';
-	import { Bold } from '@lucide/svelte';
 
+	/**
+	 * Props:
+	 * - ranks: Array of { name, rank } objects for each item.
+	 * - toImprove: Rank number to highlight in blue.
+	 * - toImpair: Rank number to highlight in red.
+	 */
 	export let ranks: { name: string; rank: number }[];
 	export let toImprove: number = -1;
 	export let toImpair: number = -1;
@@ -10,27 +15,23 @@
 	let chartDiv: HTMLDivElement;
 	let chart: echarts.ECharts | null = null;
 
+	/**
+	 * Sets up and renders the dotchart using ECharts.
+	 * - Right y-axis labels use bold for 'I' and subscript for the class index.
+	 * - Points in the toImprove rank are blue, toImpair rank are red, others are gray.
+	 */
 	function setChart() {
 		if (!ranks || !chartDiv) return;
-
-		// Get unique ranks sorted ascending
-		const uniqueRanks = Array.from(new Set(ranks.map((item) => item.rank))).sort((a, b) => a - b);
 
 		// Find the max rank to size the label array
 		const maxRank = Math.max(...ranks.map((item) => item.rank), 1);
 
-		// Fill rankLabels so that index i corresponds to rank i+1
+		// Build right y-axis labels: {bold|I}{sub|n} for each non-empty rank
 		const rankLabels: string[] = Array(maxRank).fill('');
 		let classIndex = 1;
 		for (let i = 1; i <= maxRank; i++) {
-			const names = ranks
-				.filter((item) => item.rank === i)
-				.map((item) => item.name)
-				.join(', ');
-			if (names.length === 0) {
-				continue; // Skip empty ranks
-			} // Skip empty ranks
-			else {
+			const hasItems = ranks.some((item) => item.rank === i);
+			if (hasItems) {
 				rankLabels[i - 1] = `{bold|I}{sub|${classIndex}}`;
 				classIndex++;
 			}
@@ -45,7 +46,6 @@
 			xAxis: {
 				type: 'category',
 				data: ranks.map((item) => item.name)
-				//name: 'Items'
 			},
 			yAxis: [
 				{
@@ -63,6 +63,7 @@
 					position: 'right',
 					data: rankLabels,
 					axisLabel: {
+						// Use rich text for bold and subscript
 						formatter: (value: string) => value,
 						verticalAlign: 'top',
 						rich: {
@@ -109,6 +110,7 @@
 		chart.setOption(option, true);
 	}
 
+	// Initialize and update chart on mount and after updates
 	onMount(() => {
 		setChart();
 		return () => {
@@ -123,9 +125,14 @@
 		setChart();
 	});
 
-	// Update chart when toImprove or toImpair changes
-	$: toImprove, toImpair, ranks; // triggers reactivity
+	// Reactively update chart when inputs change
+	$: toImprove, toImpair, ranks;
 	$: setChart();
 </script>
 
+<!--
+    Dotchart container.
+    - width: 100% of parent
+    - height: 300px (adjust as needed)
+-->
 <div bind:this={chartDiv} style="width: 100%; height: 300px;" />

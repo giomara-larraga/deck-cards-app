@@ -1,19 +1,24 @@
 <script lang="ts">
-	// This is done in a single file for clarity. A more factored version here: https://svelte.dev/repl/288f827275db4054b23c437a572234f6?version=3.38.2
+	// Svelte animate and drag-and-drop imports
 	import { flip } from 'svelte/animate';
 	import { dndzone } from 'svelte-dnd-action';
 
+	// App state and UI components
 	import { board, items } from '$lib/stores';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { DiamondPlus, BrushCleaning, Trash2, FilePlus } from '@lucide/svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
+
 	const flipDurationMs = 200;
 
+	/**
+	 * Add a blank card column to the board.
+	 * If the last column is already blank, increment its value instead.
+	 */
 	function addBlank() {
 		board.update((currentBoard) => {
 			const last = currentBoard[currentBoard.length - 1];
 			const newColumnId = last.rank + last.value;
-			// If the last column is blank, increment its value instead of adding a new one
 			if (last.isBlank) {
 				return [...currentBoard.slice(0, -1), { ...last, value: last.value + 1 }];
 			}
@@ -24,10 +29,13 @@
 		});
 	}
 
+	/**
+	 * Add a new rank column to the board.
+	 */
 	function addColumn() {
 		board.update((currentBoard) => {
-			const newColumnId =
-				currentBoard[currentBoard.length - 1].rank + currentBoard[currentBoard.length - 1].value;
+			const last = currentBoard[currentBoard.length - 1];
+			const newColumnId = last.rank + last.value;
 			return [
 				...currentBoard,
 				{ id: newColumnId, rank: newColumnId, computedRank: 1, isBlank: false, value: 1, items: [] }
@@ -35,25 +43,34 @@
 		});
 	}
 
+	/**
+	 * Handle drag-and-drop "consider" event for cards.
+	 * Updates the items in the column being considered.
+	 */
 	function handleDndConsiderCards(cid: number, e: any) {
-		// Find the index of the column in the board array
 		const colIdx = $board.findIndex((c) => c.id === cid);
 		if (colIdx !== -1) {
-			// Update the items for the specific column
 			$board[colIdx].items = e.detail.items;
 		}
 	}
 
+	/**
+	 * Handle drag-and-drop "finalize" event for cards.
+	 * Updates the items in the column after drop.
+	 */
 	function handleDndFinalizeCards(cid: number, e: any) {
 		const colIdx = $board.findIndex((c) => c.id === cid);
 		if (colIdx !== -1) {
 			$board[colIdx].items = e.detail.items;
 		}
-		console.log($board); // To log the updated board state
+		console.log($board); // Log updated board state
 	}
+
+	/**
+	 * Remove all items from a column.
+	 */
 	function cleanColumn(cid: number) {
 		const colIdx = $board.findIndex((c) => c.id === cid);
-
 		if (colIdx !== -1) {
 			const columnItems = $board[colIdx].items;
 			console.log(columnItems);
@@ -62,15 +79,22 @@
 	}
 </script>
 
+<!--
+    Board layout:
+    - Each column represents a rank or a blank card.
+    - Cards can be dragged between columns.
+    - Buttons to add new rank columns or blank cards.
+-->
 <section class="mb-10 flex h-[55vh] w-full flex-wrap gap-4 p-2">
 	{#each $board as column, idx (column.id)}
 		<div
 			class="column m-4 flex h-full w-52 flex-col rounded-md border p-2
-				{column.isBlank
+                {column.isBlank
 				? 'card flex aspect-square max-h-32 max-w-[128px] min-w-[96px] flex-1 items-center justify-center rounded-md border border-gray-400 bg-white p-4 shadow-md'
 				: 'border-gray-400 bg-white shadow-md'}"
 			animate:flip={{ duration: flipDurationMs }}
 		>
+			<!-- Column header: rank label or blank card -->
 			<div class="mb-2 flex items-center justify-between">
 				{#if !column.isBlank}
 					<span>
@@ -89,14 +113,13 @@
 				{/if}
 				<div class="flex gap-2"></div>
 			</div>
+			<!-- Column content: draggable cards or blank card input -->
 			{#if !column.isBlank}
 				<div
 					class="column-content flex h-full flex-col items-center overflow-y-scroll"
 					use:dndzone={{ items: column.items, flipDurationMs }}
-					on:consider={(/** @type {{ detail: { items: any; }; }} */ e) =>
-						handleDndConsiderCards(column.id, e)}
-					on:finalize={(/** @type {{ detail: { items: any; }; }} */ e) =>
-						handleDndFinalizeCards(column.id, e)}
+					on:consider={(e) => handleDndConsiderCards(column.id, e)}
+					on:finalize={(e) => handleDndFinalizeCards(column.id, e)}
 				>
 					{#each column.items as item (item.id)}
 						<div
@@ -108,6 +131,7 @@
 					{/each}
 				</div>
 			{:else}
+				<!-- Blank card: input for value -->
 				<div class="flex h-full items-center justify-center text-gray-400">
 					<Input
 						type="number"
@@ -142,7 +166,7 @@
 			{/if}
 		</div>
 	{/each}
-	<!-- Center the buttons vertically in the board section and stack them in a column -->
+	<!-- Action buttons: add new rank or blank card -->
 	<div class="flex h-full flex-col items-center justify-center gap-4">
 		<Button variant="outline" onclick={addColumn} title="Add a new rank column">
 			<DiamondPlus />

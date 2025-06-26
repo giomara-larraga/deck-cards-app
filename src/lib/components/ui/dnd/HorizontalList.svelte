@@ -1,27 +1,42 @@
-<script>
+<script lang="ts">
 	import { flip } from 'svelte/animate';
 	import { dndzone } from 'svelte-dnd-action';
+
 	/**
-	 * @type {any}
+	 * Props:
+	 * - items: Array of card objects to display and drag.
+	 * - itemWidth: CSS width for each card (default: '10em').
 	 */
-	export let items;
+	export let items: { id: number | string; shortname: string }[] = [];
 	export let itemWidth = '10em';
+
 	const flipDurationMs = 300;
+
 	/**
+	 * Handles drag-and-drop "consider" event.
+	 * Updates the items array to reflect the current drag state.
 	 * @param {{ detail: { items: any; }; }} e
 	 */
-	function handleDndConsider(e) {
+	function handleDndConsider(e: any) {
 		items = e.detail.items;
 	}
+
 	/**
+	 * Handles drag-and-drop "finalize" event.
+	 * Updates the items array after a drop and logs the result.
 	 * @param {{ detail: { items: any; }; }} e
 	 */
-	function handleDndFinalize(e) {
+	function handleDndFinalize(e: any) {
 		items = e.detail.items;
 		console.log(items);
 	}
 </script>
 
+<!--
+    HorizontalList layout:
+    - Displays draggable cards in a horizontal row.
+    - Shows a message if no cards are available.
+-->
 <section
 	class="flex min-h-36 flex-row justify-center gap-4"
 	use:dndzone={{ items, flipDurationMs }}

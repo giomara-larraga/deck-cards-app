@@ -2,15 +2,28 @@
 	import { onMount, afterUpdate } from 'svelte';
 	import * as echarts from 'echarts';
 
+	/**
+	 * Props:
+	 * - ranks: Array of arrays, each sub-array contains the names of items in a rank.
+	 * - weights: Array of weights for each rank.
+	 * - Nweights: Array of normalized weights for each rank (should sum to 1).
+	 * - rankNames: Optional array of display names for each rank.
+	 */
 	export let ranks: string[][]; // Example: [['A', 'B'], ['C'], ['D', 'E'], ['F']]
 	export let weights: number[]; // Example: [0, 1, 1.15, 2]
 	export let Nweights: number[]; // Normalized weights for each rank
-	export let rankNames: string[] = []; // New: names for each rank
+	export let rankNames: string[] = []; // Optional: names for each rank
 
 	let chartDiv: HTMLDivElement;
 	let chart: echarts.ECharts | null = null;
 	let numRanks = weights ? weights.length : 0;
 
+	/**
+	 * Sets up and renders the donut (pie) chart using ECharts.
+	 * - Each slice represents a rank.
+	 * - The label shows the rank name, weight, and normalized weight as a percentage.
+	 * - The rank name is bold and larger using ECharts rich text.
+	 */
 	function setChart() {
 		if (!ranks || !weights || ranks.length !== weights.length || !chartDiv) return;
 
@@ -22,22 +35,12 @@
 		const option = {
 			tooltip: {
 				trigger: 'item',
-				/*formatter: function (params: any) {
-					const nameLines = params.name.split('\n');
-					const rankLine = nameLines.shift() ?? '';
-					const itemsLines = nameLines.join('<br>');
-					return (
-						`<span style="font-weight:bold;">${rankLine}</span><br>` +
-						itemsLines +
-						`<br><span style="font-size:0.95em;font-weight:bold;">Weight: </span><span>${params.data.value}</span>`
-					);
-				},*/
-				show: false
+				show: false // Set to true if you want tooltips
 			},
 			legend: {
 				top: '1%',
 				left: 'center',
-				show: false
+				show: false // Hide legend for a cleaner look
 			},
 			series: [
 				{
@@ -80,6 +83,7 @@
 		chart.setOption(option, true);
 	}
 
+	// Initialize chart on mount and update on prop changes
 	onMount(() => {
 		setChart();
 		return () => {
@@ -95,4 +99,9 @@
 	});
 </script>
 
+<!--
+    Donut chart container.
+    - width: 100% of parent
+    - height: 300px (adjust as needed)
+-->
 <div bind:this={chartDiv} style="width: 100%; height: 300px;" />
