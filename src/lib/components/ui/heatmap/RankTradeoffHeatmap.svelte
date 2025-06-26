@@ -7,24 +7,24 @@
 	let chartDiv: HTMLDivElement;
 	let chart: echarts.ECharts | null = null;
 
-	let numWeights = weights ? weights.length : 0;
-
 	function setChart() {
 		if (!weights || weights.length === 0 || !chartDiv) return;
 
 		const N = weights.length;
-		const labels = Array.from({ length: N }, (_, i) => `I${i + 1}`);
+		const labels = Array.from({ length: N }, (_, i) => `I${N - i}`);
 
 		const heatmapData = [];
 		for (let i = 0; i < N; i++) {
 			for (let j = 0; j < N; j++) {
-				if (i >= j) {
+				if (i <= j) {
 					heatmapData.push([i, j, null]);
 				} else {
-					heatmapData.push([i, j, weights[i] / weights[j]]);
+					heatmapData.push([i, j, weights[j] / weights[i]]);
 				}
 			}
 		}
+		console.log('weights', weights);
+		console.log('heatmapData', heatmapData);
 
 		const option = {
 			tooltip: {
@@ -44,11 +44,13 @@
 				type: 'category',
 				data: labels,
 				position: 'top',
+				inverse: true,
 				splitArea: { show: true }
 			},
 			yAxis: {
 				type: 'category',
 				data: labels,
+				inverse: true,
 				splitArea: { show: true }
 			},
 			visualMap: {
