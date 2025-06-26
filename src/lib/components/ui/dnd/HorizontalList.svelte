@@ -33,7 +33,7 @@
 	{:else}
 		{#each items as item (item.id)}
 			<div
-				class="card flex aspect-square max-h-32 max-w-[128px] min-w-[96px] flex-1 items-center justify-center rounded-md border bg-yellow-200 p-4 shadow-md"
+				class="card flex aspect-square max-h-32 max-w-[128px] min-w-[96px] flex-1 items-center justify-center rounded-md border bg-yellow-200 p-4 text-xl font-medium shadow-md"
 				style="flex: 0 0 {itemWidth}; margin: 0 0.15em"
 				animate:flip={{ duration: flipDurationMs }}
 			>
