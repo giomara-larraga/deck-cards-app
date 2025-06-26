@@ -46,13 +46,19 @@
 	let nValue: number = 0;
 	let N = 3; // or set to your actual max value
 
-	//$: N = Math.max(nonEmptyRanks[selectedR2] - nonEmptyRanks[selectedR1], 0); // Ensure N is at least 3
 	$: toImprove = nonEmptyRanks[selectedR1];
 	$: toImpair = nonEmptyRanks[selectedR2];
 
 	$: if (weights.length > 0) {
-		const sum = weights.reduce((acc, w) => acc + w, 0);
-		normalizedWeights = sum > 0 ? weights.map((weight) => weight / sum) : weights.map(() => 0);
+		let sum_weights = 0;
+		nonEmptyRanksArray.forEach((rank, idx) => {
+			if (rank.length > 0) {
+				// The sum of the weights should consided the length of the rank
+				sum_weights += weights[idx] * rank.length;
+			}
+		});
+		normalizedWeights =
+			sum_weights > 0 ? weights.map((weight) => weight / sum_weights) : weights.map(() => 0);
 	}
 </script>
 
